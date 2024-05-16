@@ -4,6 +4,12 @@
 
 ### Patch Changes
 
+- a265b04: Initial commit
+
+## 0.0.1
+
+### Patch Changes
+
 - 0102ffe: Initial push
 
 ## 0.0.2
