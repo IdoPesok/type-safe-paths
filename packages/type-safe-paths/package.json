@@ -1,0 +1,44 @@
+{
+  "name": "type-safe-paths",
+  "version": "0.0.0",
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "dist/**"
+  ],
+  "exports": {
+    ".": "./dist/index.mjs"
+  },
+  "typesVersions": {
+    "*": {
+      ".": [
+        "./dist/index.d.mts"
+      ]
+    }
+  },
+  "sideEffects": false,
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "lint": "eslint .",
+    "lint:fix": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "format:write": "prettier --write \"**/*.{ts,tsx,mdx}\" --cache",
+    "format:check": "prettier --check \"**/*.{ts,tsx,mdx}\" --cache",
+    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "dev": "npm run build -- --watch",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .next",
+    "test": "npx tsx src/tests.ts"
+  },
+  "dependencies": {
+    "path-to-regexp": "^6.2.2",
+    "typescript": "latest",
+    "zod": "^3.23.5"
+  },
+  "devDependencies": {
+    "tsup": "^8.0.2"
+  }
+}
