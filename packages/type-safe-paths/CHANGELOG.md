@@ -1,5 +1,11 @@
 # server-actions-wrapper
 
+## 0.0.2
+
+### Patch Changes
+
+- 395ce6e: Fix bug that required params object when there were no params
+
 ## 0.0.1
 
 ### Patch Changes
