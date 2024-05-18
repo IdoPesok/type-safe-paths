@@ -229,14 +229,16 @@ export const createPathHelpers = <
   >(
     pathname: string,
     path: TPath
-  ): TRegistry["$registry"][TPath]["params"] => {
+  ): {
+    [k in TRegistry["$registry"][TPath]["params"]]: string
+  } => {
     const finalParams: Record<string, string> = {}
 
     let basePathSplit = (path as string).split("/")
     let pathSplit = (pathname.split("?")[0] || "NEVER_MATCH").split("/")
 
     if (basePathSplit.length !== pathSplit.length) {
-      return null
+      return {} as any
     }
 
     // copy over the params
