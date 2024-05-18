@@ -3,6 +3,8 @@ import z from "zod"
 
 type Length<T extends any[]> = T extends { length: infer L } ? L : never
 
+type IsEmptyObject<T> = keyof T extends never ? true : false
+
 type BuildTuple<L extends number, T extends any[] = []> = T extends {
   length: L
 }
@@ -30,6 +32,7 @@ type Path<
   ? never
   :
       | (TDepth extends 0 ? `/` : ``)
+      | "(.*)"
       | `/${":" | ""}${Segment<TSegmentValue>}${Path<TSegmentValue, TDepth extends number ? Add<TDepth, 1> : never>}`
 
 type TExtractPathFromString<T extends string> =
@@ -121,22 +124,36 @@ export const createPathHelpers = <
 >(
   registry: TRegistry
 ) => {
+  type TSearchParams<TKey extends keyof TRegistry["$registry"]> =
+    TRegistry["$registry"][TKey]["searchParams"]
+
+  type TParams<TKey extends keyof TRegistry["$registry"]> =
+    TRegistry["$registry"][TKey]["params"]
+
+  type TOpts<TKey extends keyof TRegistry["$registry"]> =
+    (TParams<TKey> extends never
+      ? {}
+      : {
+          params: {
+            [k in TRegistry["$registry"][TKey]["params"]]: string
+          }
+        }) &
+      (TSearchParams<TKey> extends z.AnyZodObject
+        ? {
+            searchParams: z.input<TSearchParams<TKey>>
+          }
+        : {}) & {}
+
   const buildPath = <TKey extends keyof TRegistry["$registry"]>(
     k: TKey,
-    opts: {
-      params: {
-        [k in TRegistry["$registry"][TKey]["params"]]: string
-      }
-    } & (TRegistry["$registry"][TKey]["searchParams"] extends z.AnyZodObject
-      ? {
-          searchParams: z.input<TRegistry["$registry"][TKey]["searchParams"]>
-        }
-      : {})
+    ...optsArr: IsEmptyObject<TOpts<TKey>> extends true ? [] : [TOpts<TKey>]
   ): string => {
     let mutatedPath = k.toString()
 
+    const opts = optsArr[0]
+
     // replace params in path
-    if (opts.params) {
+    if (opts && "params" in opts && opts.params) {
       for (const [key, value] of Object.entries(opts.params)) {
         mutatedPath = mutatedPath.replace(`:${key}`, value as string)
       }
@@ -144,18 +161,25 @@ export const createPathHelpers = <
 
     const dummyBase = "http://localhost"
 
+    // remove regex from path
+    if (mutatedPath.includes("(.*)")) {
+      mutatedPath = mutatedPath.replace("(.*)", "")
+    }
+
     const url = new URL(mutatedPath, dummyBase)
 
-    if (!("searchParams" in opts)) {
+    if (opts && !("searchParams" in opts)) {
       return url.pathname
     }
 
-    let parsed = opts.searchParams
+    let parsed = opts && "searchParams" in opts ? opts.searchParams : undefined
 
     const schema = registry.$dataMap[k].searchParamsSchema || undefined
     if (schema) {
       parsed = schema.parse(parsed)
     }
+
+    if (!parsed) return url.pathname
 
     // add search params
     for (const [key, value] of Object.entries(parsed)) {
