@@ -49,7 +49,7 @@ const {
   extractParamsFromPathName,
 } = createPathHelpers(paths)
 
-type Test = inferPathProps<typeof paths, "/posts/details/:postId/:commentId">
+type Test = inferPathProps<typeof paths, "/posts">
 
 const testPath = buildPath("/posts/details/:postId/:commentId", {
   params: {
@@ -72,11 +72,9 @@ const final = parseSearchParamsForPath(
 console.log(testPath)
 console.log(match)
 console.log("final", final)
-console.log(
-  extractParamsFromPathName(
-    "/posts/details/123/456?query=%22hello+world%22",
-    "/posts/details/:postId/:commentId"
-  )
+const result = extractParamsFromPathName(
+  "/posts/details/123/456?query=%22hello+world%22",
+  "/posts"
 )
 
 console.log(buildPath("/api(.*)"))
