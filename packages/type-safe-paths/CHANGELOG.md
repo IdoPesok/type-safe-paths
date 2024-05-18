@@ -1,5 +1,11 @@
 # server-actions-wrapper
 
+## 0.0.3
+
+### Patch Changes
+
+- fdb251d: Fix extractParamsFromPathName return type
+
 ## 0.0.2
 
 ### Patch Changes
