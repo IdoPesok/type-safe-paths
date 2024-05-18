@@ -26,6 +26,21 @@ const paths = new TypeSafePaths({
       optional: z.string().default(" the parsing worked"),
     }),
   })
+  .add("/posts", {
+    metadata: {
+      allowedPermissions: ["user"],
+      testing: "hello world",
+    },
+    searchParams: z.object({
+      query: z.string().optional(),
+    }),
+  })
+  .add("/api(.*)", {
+    metadata: {
+      allowedPermissions: ["user"],
+      testing: "hello world",
+    },
+  })
 
 const {
   buildPath,
@@ -63,3 +78,5 @@ console.log(
     "/posts/details/:postId/:commentId"
   )
 )
+
+console.log(buildPath("/api(.*)"))
