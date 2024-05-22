@@ -1,5 +1,11 @@
 # server-actions-wrapper
 
+## 0.0.4
+
+### Patch Changes
+
+- 3ec2ab2: Added inferLinkComponentProps
+
 ## 0.0.3
 
 ### Patch Changes
