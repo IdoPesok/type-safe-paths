@@ -189,6 +189,18 @@ export const createPathHelpers = <
     return url.pathname + url.search
   }
 
+  const getHrefFromLinkComponentProps = (props: {
+    href: string
+    params?: any
+    searchParams?: any
+  }): string => {
+    // @ts-expect-error
+    return buildPath(props.href, {
+      params: props.params,
+      searchParams: props.searchParams,
+    })
+  }
+
   const matchPath = (
     pathname: string
   ):
@@ -304,6 +316,11 @@ export const createPathHelpers = <
      * Parses the search params for a path
      */
     parseSearchParamsForPath,
+
+    /**
+     * Parse the href from a link component props
+     */
+    getHrefFromLinkComponentProps,
   }
 }
 
@@ -318,3 +335,26 @@ export type inferPathProps<
     ? z.input<TRegistry["$registry"][TPath]["searchParams"]>
     : undefined
 }>
+
+export type inferLinkComponentProps<
+  TRegistry extends TypeSafePaths<any, any>,
+  TLinkComponent extends (...args: any) => any = (...args: any) => any,
+> = (Parameters<TLinkComponent>[0] extends Object
+  ? Parameters<TLinkComponent>[0]
+  : {}) &
+  {
+    [TPath in keyof TRegistry["$registry"]]: PrettifyNested<
+      {
+        href: TPath
+      } & (keyof inferPathProps<TRegistry, TPath>["params"] extends never
+        ? {}
+        : {
+            params: inferPathProps<TRegistry, TPath>["params"]
+          }) &
+        (inferPathProps<TRegistry, TPath>["searchParams"] extends undefined
+          ? {}
+          : {
+              searchParams: inferPathProps<TRegistry, TPath>["searchParams"]
+            })
+    >
+  }[keyof TRegistry["$registry"]]
