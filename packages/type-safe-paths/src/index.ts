@@ -190,14 +190,12 @@ export const createPathHelpers = <
   }
 
   const getHrefFromLinkComponentProps = (props: {
-    href: string
-    params?: any
-    searchParams?: any
+    href: { pathname: string; params?: any; searchParams?: any }
   }): string => {
     // @ts-expect-error
-    return buildPath(props.href, {
-      params: props.params,
-      searchParams: props.searchParams,
+    return buildPath(props.href.pathname, {
+      params: props.href.params,
+      searchParams: props.href.searchParams,
     })
   }
 
@@ -341,11 +339,11 @@ export type inferLinkComponentProps<
   TLinkComponent extends (...args: any) => any = (...args: any) => any,
 > = (Parameters<TLinkComponent>[0] extends Object
   ? Parameters<TLinkComponent>[0]
-  : {}) &
-  {
+  : {}) & {
+  href: {
     [TPath in keyof TRegistry["$registry"]]: PrettifyNested<
       {
-        href: TPath
+        pathname: TPath
       } & (keyof inferPathProps<TRegistry, TPath>["params"] extends never
         ? {}
         : {
@@ -358,3 +356,4 @@ export type inferLinkComponentProps<
             })
     >
   }[keyof TRegistry["$registry"]]
+}

@@ -192,6 +192,94 @@ export default async function MyPage({ params, searchParams }: PathProps) {
 
 This approach ensures that `params` and `searchParams` in your component have the correct types as specified in the path definition, making your code more robust and maintainable.
 
+### Type-Safe Link Component
+
+You can create a type-safe link component using the `inferLinkComponentProps` utility function. This ensures that the link component receives the correct props based on the defined paths.
+
+````typescript
+import Link from 'next/link'
+import { TypeSafePaths, createPathHelpers, inferLinkComponentProps } from 'type-safe-paths'
+import { forwardRef } from 'react'
+
+// Create a new instance of TypeSafePaths
+const paths = new TypeSafePaths({
+  // Your path definitions here
+  ...
+})
+
+// Create a type-safe link component
+const TypeSafeLink = forwardRef<
+  HTMLAnchorElement,
+  inferLinkComponentProps<typeof paths, typeof Link>
+>((props, ref) => {
+  const { getHrefFromLinkComponentProps } = createPathHelpers(paths)
+  return (
+    <Link {...props} href={getHrefFromLinkComponentProps(props)} ref={ref}>
+      {props.children}
+    </Link>
+  )
+})
+
+Certainly! Here's the updated README with a new section for the type-safe link using `inferLinkComponentProps`:
+
+```markdown
+# TypeSafePaths
+
+...
+
+## Usage
+
+...
+
+### Type-Safe Link Component
+
+You can create a type-safe link component using the `inferLinkComponentProps` utility function. This ensures that the link component receives the correct props based on the defined paths.
+
+```typescript
+import Link from 'next/link'
+import { TypeSafePaths, createPathHelpers, inferLinkComponentProps } from 'type-safe-paths'
+import { forwardRef } from 'react'
+
+// Create a new instance of TypeSafePaths
+const myPaths = new TypeSafePaths({
+  // Your path definitions here
+  ...
+})
+
+// Create a type-safe link component
+const TypeSafeLink = forwardRef<
+  HTMLAnchorElement,
+  inferLinkComponentProps<typeof myPaths, typeof Link>
+>((props, ref) => {
+  const { getHrefFromLinkComponentProps } = createPathHelpers(myPaths)
+  return (
+    <Link {...props} href={getHrefFromLinkComponentProps(props)} ref={ref}>
+      {props.children}
+    </Link>
+  )
+})
+````
+
+In this example, we create a `TypeSafeLink` component using `forwardRef`. The component receives props of type `inferLinkComponentProps<typeof myPaths, typeof Link>`, which infers the correct props based on the defined paths in `myPaths`.
+
+Inside the component, we use the `getHrefFromLinkComponentProps` function from `createPathHelpers` to generate the `href` prop for the `Link` component based on the provided props.
+
+Now you can use the `TypeSafeLink` component in your application, and it will ensure that the props you pass to it match the defined paths and their parameters.
+
+```typescript
+<TypeSafeLink
+  href={{
+    pathname: "/posts/details/:postId/:commentId",
+    params: { postId: "123", commentId: "456" },
+    searchParams: { query: "example query" },
+  }}
+>
+  Go to Comment
+</TypeSafeLink>
+```
+
+The `TypeSafeLink` component will provide type safety and autocomplete suggestions for the `path` and `params` props based on your defined paths.
+
 ## API
 
 ### `TypeSafePaths`
@@ -228,6 +316,12 @@ Parses and validates search parameters from a URL.
 
 Infers the types of path parameters and search parameters for a given path.
 
+### `inferLinkComponentProps`
+
+#### `inferLinkComponentProps<TRegistry extends TypeSafePaths<any, any>, TLinkComponent extends React.ComponentType<any>>`
+
+Infers the props for a type-safe link component based on the defined paths and the underlying link component.
+
 ## License
 
 MIT
@@ -243,3 +337,7 @@ This library was inspired by the need for a type-safe way to manage URL paths an
 ---
 
 Feel free to reach out if you have any questions or need further assistance!
+
+```
+
+```
