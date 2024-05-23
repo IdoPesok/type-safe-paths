@@ -296,7 +296,3 @@ This library was inspired by the need for a type-safe way to manage URL paths an
 ---
 
 Feel free to reach out if you have any questions or need further assistance!
-
-```
-
-```
