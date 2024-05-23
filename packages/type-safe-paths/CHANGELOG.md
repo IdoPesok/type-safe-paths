@@ -1,5 +1,11 @@
 # server-actions-wrapper
 
+## 0.1.0
+
+### Minor Changes
+
+- 8217f9a: TypeSafeLink component href change
+
 ## 0.0.4
 
 ### Patch Changes
