@@ -196,7 +196,7 @@ This approach ensures that `params` and `searchParams` in your component have th
 
 You can create a type-safe link component using the `inferLinkComponentProps` utility function. This ensures that the link component receives the correct props based on the defined paths.
 
-````typescript
+```typescript
 import Link from 'next/link'
 import { TypeSafePaths, createPathHelpers, inferLinkComponentProps } from 'type-safe-paths'
 import { forwardRef } from 'react'
@@ -214,51 +214,10 @@ const TypeSafeLink = forwardRef<
 >((props, ref) => {
   const { getHrefFromLinkComponentProps } = createPathHelpers(paths)
   return (
-    <Link {...props} href={getHrefFromLinkComponentProps(props)} ref={ref}>
-      {props.children}
-    </Link>
+    <Link {...props} href={getHrefFromLinkComponentProps(props)} ref={ref} />
   )
 })
-
-Certainly! Here's the updated README with a new section for the type-safe link using `inferLinkComponentProps`:
-
-```markdown
-# TypeSafePaths
-
-...
-
-## Usage
-
-...
-
-### Type-Safe Link Component
-
-You can create a type-safe link component using the `inferLinkComponentProps` utility function. This ensures that the link component receives the correct props based on the defined paths.
-
-```typescript
-import Link from 'next/link'
-import { TypeSafePaths, createPathHelpers, inferLinkComponentProps } from 'type-safe-paths'
-import { forwardRef } from 'react'
-
-// Create a new instance of TypeSafePaths
-const myPaths = new TypeSafePaths({
-  // Your path definitions here
-  ...
-})
-
-// Create a type-safe link component
-const TypeSafeLink = forwardRef<
-  HTMLAnchorElement,
-  inferLinkComponentProps<typeof myPaths, typeof Link>
->((props, ref) => {
-  const { getHrefFromLinkComponentProps } = createPathHelpers(myPaths)
-  return (
-    <Link {...props} href={getHrefFromLinkComponentProps(props)} ref={ref}>
-      {props.children}
-    </Link>
-  )
-})
-````
+```
 
 In this example, we create a `TypeSafeLink` component using `forwardRef`. The component receives props of type `inferLinkComponentProps<typeof myPaths, typeof Link>`, which infers the correct props based on the defined paths in `myPaths`.
 
